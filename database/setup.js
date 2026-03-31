@@ -1,9 +1,25 @@
-require("dotenv").config();
-const {Sequelize}= require("sequelize");
+// Import models
+const Course = require("../models/Course");
+const Assignment = require("../models/Assignment");
+const StudySession = require("../models/StudySession");
 
-// Init database connection
-const db = new Sequelize({
-    dialect: 'sqlite',
-    storage: `database/${process.env.DB_NAME}` || 'planner.db',
-    logging: false
-});
+// Func: runs database setup
+async function setupDatabase() {
+  try {
+
+    await db.sync({ force: true });
+
+    console.log("Database + tables created successfully");
+
+  } catch (error) {
+
+    console.error("Database setup failed:", error);
+
+  } finally {
+
+    process.exit();
+
+  }
+}
+
+setupDatabase();
