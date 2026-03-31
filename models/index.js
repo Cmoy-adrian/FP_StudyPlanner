@@ -7,18 +7,34 @@ const StudySession = require("./StudySession");
 
 // Relationships
 Course.hasMany(Assignment, {
-  foreignKey: "courseId",
+  foreignKey: {
+    name:"courseId",
+    allowNull: false
+  },
   onDelete: "CASCADE"
 });
 
-Assignment.belongsTo(Course);
+Assignment.belongsTo(Course, {
+  foreignKey: {
+    name:"courseId",
+    allowNull: false
+  }
+});
 
 Assignment.hasMany(StudySession, {
-  foreignKey: "assignmentId",
+  foreignKey: {
+    name: "assignmentId",
+    allowNull: false
+  },
   onDelete: "CASCADE"
 });
 
-StudySession.belongsTo(Assignment);
+StudySession.belongsTo(Assignment, {
+  foreignKey: {
+    name: "assignmentId",
+    allowNull: false
+  }
+});
 
 module.exports = {
   db,
