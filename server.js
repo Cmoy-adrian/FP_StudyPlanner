@@ -1,0 +1,59 @@
+require("dotenv").config();
+
+const express = require("express");
+
+const { db } = require("./models");
+
+const courseRoutes = require("./routes/courseRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes");
+const studySessionRoutes = require("./routes/studySessionRoutes");
+
+const logger = require("./middleware/logger");
+const errorHandler = require("./middleware/errorHandler");
+
+const app = express();
+
+// Middleware
+app.use(express.json());
+
+app.use(logger);
+
+// Routes
+app.use("/courses", courseRoutes);
+
+app.use("/assignments", assignmentRoutes);
+
+app.use("/study-sessions", studySessionRoutes);
+
+// Health check route
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    message: "Server is running",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Error middleware
+app.use(errorHandler);
+
+// Start server
+const PORT = process.env.PORT || 3000;
+
+// Func: Run to boot up server
+async function startServer() {
+  try {
+    await db.authenticate();
+
+    console.log("Database connected");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error("Database connection failed:", error);
+  }
+}
+
+startServer();
