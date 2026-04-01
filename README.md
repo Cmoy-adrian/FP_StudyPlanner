@@ -1,5 +1,8 @@
 # Study Planner REST API
 
+**Interactive API Documentation (Postman):**  
+https://documenter.getpostman.com/view/52069381/2sBXiokUjh#a3bde9ab-de98-4d51-8843-f484ad94a963
+
 ## Project Overview
 
 The Study Planner REST API is a backend service designed to help students organize courses, assignments, and study sessions efficiently. It allows users to create structured study plans, track coursework, and log study time through a RESTful interface.
