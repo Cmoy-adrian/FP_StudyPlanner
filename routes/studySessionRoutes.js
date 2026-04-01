@@ -40,12 +40,12 @@ router.get("/:id", async (req, res, next) => {
 // POST /study-sessions - Create new study session
 router.post("/", async (req, res, next) => {
     try {
-        const {assignmentId, duration} = req.body;
+        const {assignmentId, startTime, endTime} = req.body;
 
         // Validate required fields
-        if (!assignmentId || !duration) {
+        if (!assignmentId || !startTime || !endTime) {
             return res.status(400).json({
-                error: "assignmentId and duration are required"
+                error: "assignmentId, startTime, and endTime are required"
             });
         }
 

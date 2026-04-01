@@ -25,11 +25,13 @@ describe("POST /study-sessions", () => {
       .post("/study-sessions")
       .send({
         assignmentId: assignment.id,
-        duration: 60
-      });
+        startTime: new Date(),
+        endTime: new Date(),
+        durationMinutes: 60
+       })
 
     expect(response.statusCode).toBe(201);
-    expect(response.body.duration).toBe(60);
+    expect(response.body.durationMinutes).toBe(60);
 
   });
 
