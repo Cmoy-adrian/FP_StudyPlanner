@@ -45,7 +45,7 @@ router.post("/", async (req, res, next) => {
         // Validate required fields
         if (!title || !courseId) {
             return res.status(400).json({
-                error: "Tittle and courseId are required"
+                error: "Title and courseId are required"
             });
         }
 
