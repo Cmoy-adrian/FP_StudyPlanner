@@ -7,7 +7,7 @@
     "start": "node server.js",
     "setup": "node database/setup.js",
     "seed": "node database/seed.js",
-    "test": "NODE_ENV=test jest --verbose"
+    "test": "cross-env NODE_ENV=test jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "sqlite3": "^6.0.1"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "jest": "^30.3.0",
     "supertest": "^7.2.2"
   }
