@@ -67,7 +67,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PUT /study-sessions/:id - Update study session
-router.pu("/:id", async (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
     try {
         const session = await StudySession.findByPk(req.params.id);
 
