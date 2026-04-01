@@ -186,7 +186,7 @@ Status: **200 OK**
 
 Success response:
 
-Status: **204 No Content**
+Status: **200 OK**
 
 
 
@@ -276,7 +276,7 @@ Status: **200 OK**
 
 Success response:
 
-Status: **204 No Content**
+Status: **200 OK**
 
 
 
@@ -371,7 +371,7 @@ Status: **200 OK**
 
 Success response:
 
-Status: **204 No Content**
+Status: **200 OK**
 
 
 
