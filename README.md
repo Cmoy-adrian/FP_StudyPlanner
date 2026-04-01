@@ -1,5 +1,3 @@
-# FP_StudyPlanner
-
 # Study Planner REST API
 
 ## Project Overview
