@@ -1,9 +1,16 @@
 const request = require("supertest");
 const app = require("../server");
-const { db, Course, Assignment } = require("../models");
 
-beforeEach(async () => {
+const db = require("../database/db");
+const Course = require("../models/Course");
+const Assignment = require("../models/Assignment");
+
+beforeAll(async () => {
   await db.sync({ force: true });
+});
+
+afterAll(async () => {
+  await db.close();
 });
 
 describe("POST /study-sessions", () => {
@@ -41,12 +48,14 @@ describe("POST /study-sessions", () => {
     const response = await request(app)
       .post("/study-sessions")
       .send({
-        duration: 45
+        startTime: new Date(),
+        endTime: new Date(),
+        durationMinutes: 45
       });
 
     expect(response.statusCode).toBe(400);
     expect(response.body.error)
-      .toBe("assignmentId and duration are required");
+      .toBe("assignmentId, startTime, and endTime are required");
 
   });
 
@@ -57,7 +66,9 @@ describe("POST /study-sessions", () => {
       .post("/study-sessions")
       .send({
         assignmentId: 999,
-        duration: 30
+        startTime: new Date(),
+        endTime: new Date(),
+        durationMinutes: 30
       });
 
     expect(response.statusCode).toBe(400);

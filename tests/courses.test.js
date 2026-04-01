@@ -1,9 +1,14 @@
 const request = require("supertest");
 const app = require("../server");
-const { db } = require("../models");
 
-beforeEach(async () => {
+const db = require("../database/db");
+
+beforeAll(async () => {
   await db.sync({ force: true });
+});
+
+afterAll(async () => {
+  await db.close();
 });
 
 describe("POST /courses", () => {
