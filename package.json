@@ -7,7 +7,7 @@
     "start": "node server.js",
     "setup": "node database/setup.js",
     "seed": "node database/seed.js",
-    "test": "jest --verbose"
+    "test": "NODE_ENV=test jest --verbose"
   },
   "repository": {
     "type": "git",
