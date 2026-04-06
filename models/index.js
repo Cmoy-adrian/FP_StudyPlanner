@@ -3,12 +3,28 @@ const db = require("../database/db");
 const Course = require("./Course");
 const Assignment = require("./Assignment");
 const StudySession = require("./StudySession");
+const User = require("./User");
 
+// USER → COURSE
+User.hasMany(Course, {
+  foreignKey: {
+    name: "userId",
+    allowNull: false
+  },
+  onDelete: "CASCADE"
+});
 
-// Relationships
+Course.belongsTo(User, {
+  foreignKey: {
+    name: "userId",
+    allowNull: false
+  }
+});
+
+// COURSE → ASSIGNMENT
 Course.hasMany(Assignment, {
   foreignKey: {
-    name:"courseId",
+    name: "courseId",
     allowNull: false
   },
   onDelete: "CASCADE"
@@ -16,11 +32,12 @@ Course.hasMany(Assignment, {
 
 Assignment.belongsTo(Course, {
   foreignKey: {
-    name:"courseId",
+    name: "courseId",
     allowNull: false
   }
 });
 
+// ASSIGNMENT → STUDY SESSION
 Assignment.hasMany(StudySession, {
   foreignKey: {
     name: "assignmentId",
@@ -36,8 +53,10 @@ StudySession.belongsTo(Assignment, {
   }
 });
 
+// Exports
 module.exports = {
   db,
+  User,
   Course,
   Assignment,
   StudySession
