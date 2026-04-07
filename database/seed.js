@@ -27,7 +27,7 @@ async function seedDatabase() {
       username: "student1",
       email: "student@test.com",
       password: "password123",
-      role: "student"
+      role: "user"
     });
 
     const adminUser = await User.create({
@@ -42,7 +42,7 @@ async function seedDatabase() {
       username: "student2",
       email: "student2@test.com",
       password: "password123",
-      role: "student"
+      role: "user"
     });
 
 
