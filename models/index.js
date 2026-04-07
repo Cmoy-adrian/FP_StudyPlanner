@@ -53,11 +53,9 @@ StudySession.belongsTo(Assignment, {
   }
 });
 
-db.sequelize = db;
-
 // Exports
 module.exports = {
-  db,
+  sequelize,
   User,
   Course,
   Assignment,
