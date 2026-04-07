@@ -76,8 +76,8 @@ router.post("/", async (req, res, next) => {
         });
 
         if (!assignment || !assignment.Course || assignment.Course.userId !== req.user.id) {
-            return res.status(400).json({
-                error: "Invalid assignmentId"
+            return res.status(403).json({
+                error: "Access denied"
             });
         }
 
