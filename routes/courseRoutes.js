@@ -2,11 +2,19 @@ const express = require("express");
 const router = express.Router();
 
 const { Course } = require("../models");
+const authenticateUser = require("../middleware/auth");
+
+// Makes all routes require login automatically
+router.use(authenticateUser);
 
 // GET /courses - Gets ALL course information
 router.get("/", async (req, res , next) => {
     try {
-        const courses = await Course.findAll();
+        const courses = await Course.findAll({
+            where: {
+                userId: req.user.id
+            }
+        });
         
         res.status(200).json(courses);
 
@@ -24,6 +32,13 @@ router.get("/:id", async (req, res, next) => {
             return res.status(404).json({
                 error: "Course not found"
             });
+        }
+
+        // Check for course ownership
+        if (course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            })
         }
 
         res.status(200).json(course);
@@ -45,7 +60,10 @@ router.post("/", async (req, res, next) => {
             });
         }
 
-        const newCourse = await Course.create(req.body);
+        const newCourse = await Course.create({
+            name,
+            userId: req.user.id
+        });
 
         res.status(201).json(newCourse);
 
@@ -63,6 +81,13 @@ router.put("/:id", async (req, res, next) => {
             return res.status(404).json({
                 error: "Course not found"
             });
+        }
+
+        // Check for course ownership
+        if (course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            })
         }
 
         await course.update(req.body);
@@ -83,6 +108,13 @@ router.delete("/:id", async (req, res, next) => {
             return res.status(404).json({
                 error: "Course not found"
             }); 
+        }
+
+        // Check for course ownership
+        if (course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            })
         }
 
         await course.destroy();
