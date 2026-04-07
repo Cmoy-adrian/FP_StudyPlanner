@@ -91,8 +91,7 @@ router.post("/", async (req, res, next) => {
         const session = await StudySession.create({
             assignmentId,
             startTime,
-            endTime,
-            durationMinutes
+            endTime
         });
 
         res.status(201).json(session);

@@ -15,6 +15,8 @@ const StudySession = db.define("StudySession", {
 
     durationMinutes: {
         type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
         validate: {
             min: 0
         }
@@ -22,10 +24,11 @@ const StudySession = db.define("StudySession", {
 });
 
 // Calculate duration
-StudySession.beforeValidate((session) => {
+StudySession.beforeCreate((session) => {
     if (session.startTime && session.endTime) {
-        session.durationMinutes =
-            (new Date(session.endTime) - new Date(session.startTime)) / (1000 * 60);
+        session.durationMinutes = Math.round(
+            (new Date(session.endTime) - new Date(session.startTime)) / (1000 * 60)
+    );
     }
 });
 
