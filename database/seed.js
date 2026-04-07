@@ -1,6 +1,12 @@
 require("dotenv").config();
 
-const { db, Course, Assignment, StudySession } = require("../models");
+const {
+  db,
+  User,
+  Course,
+  Assignment,
+  StudySession
+} = require("../models");
 
 async function seedDatabase() {
 
@@ -11,19 +17,60 @@ async function seedDatabase() {
     console.log("Database reset complete");
 
 
-    // Create Courses
+    /*
+    =========================
+    Create Users
+    =========================
+    */
+
+    const studentUser = await User.create({
+      username: "student1",
+      email: "student@test.com",
+      password: "password123",
+      role: "student"
+    });
+
+    const adminUser = await User.create({
+      username: "admin1",
+      email: "admin@test.com",
+      password: "admin123",
+      role: "admin"
+    });
+
+    // Second student for permission testing
+    const studentUser2 = await User.create({
+      username: "student2",
+      email: "student2@test.com",
+      password: "password123",
+      role: "student"
+    });
+
+
+    /*
+    =========================
+    Create Courses
+    =========================
+    */
+
     const calcCourse = await Course.create({
       name: "Calculus II",
-      term: "Spring 2026"
+      term: "Spring 2026",
+      userId: studentUser.id
     });
 
     const csCourse = await Course.create({
       name: "Backend Development",
-      term: "Spring 2026"
+      term: "Spring 2026",
+      userId: studentUser.id
     });
 
 
-    // Create Assignments
+    /*
+    =========================
+    Create Assignments
+    =========================
+    */
+
     const assignment1 = await Assignment.create({
       title: "Integration Worksheet",
       description: "Practice integration by parts problems",
@@ -41,7 +88,12 @@ async function seedDatabase() {
     });
 
 
-    // Create Study Sessions
+    /*
+    =========================
+    Create Study Sessions
+    =========================
+    */
+
     await StudySession.create({
       startTime: new Date("2026-04-01T14:00:00"),
       endTime: new Date("2026-04-01T15:30:00"),
@@ -56,6 +108,29 @@ async function seedDatabase() {
 
 
     console.log("Seed data inserted successfully");
+
+
+    /*
+    =========================
+    Test Login Credentials
+    =========================
+    */
+
+    console.log(`
+      Test Accounts Created:
+
+      Student 1:
+      email: student@test.com
+      password: password123
+
+      Student 2:
+      email: student2@test.com
+      password: password123
+
+      Admin:
+      email: admin@test.com
+      password: admin123
+    `);
 
   } catch (error) {
 
