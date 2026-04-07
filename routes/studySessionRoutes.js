@@ -87,10 +87,6 @@ router.post("/", async (req, res, next) => {
                 error: "Access denied"
             });
         }
-        
-        // Calculate session duration
-        const durationMinutes =
-            (new Date(endTime) - new Date(startTime)) / (1000 * 60);
 
         const session = await StudySession.create({
             assignmentId,
