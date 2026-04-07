@@ -7,7 +7,7 @@
     "start": "node server.js",
     "setup": "node database/setup.js",
     "seed": "node database/seed.js",
-    "test": "cross-env NODE_ENV=test jest --verbose"
+    "test": "cross-env NODE_ENV=test jest --runInBand --verbose"
   },
   "repository": {
     "type": "git",
