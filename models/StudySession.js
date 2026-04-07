@@ -22,9 +22,11 @@ const StudySession = db.define("StudySession", {
 });
 
 // Calculate duration
-beforeValidate(session => {
-    session.durationMinutes =
-        (new Date(session.endTime) - new Date(session.startTime)) / (1000 * 60);
+StudySession.beforeValidate((session) => {
+    if (session.startTime && session.endTime) {
+        session.durationMinutes =
+            (new Date(session.endTime) - new Date(session.startTime)) / (1000 * 60);
+    }
 });
 
 // Exports
