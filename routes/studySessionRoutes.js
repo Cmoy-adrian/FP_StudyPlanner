@@ -75,7 +75,7 @@ router.post("/", async (req, res, next) => {
             include: Course
         });
 
-        if (!assignment || assignment.Course.userId !== req.user.id) {
+        if (!assignment || !assignment.Course || assignment.Course.userId !== req.user.id) {
             return res.status(400).json({
                 error: "Invalid assignmentId"
             });
