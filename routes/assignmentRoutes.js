@@ -2,12 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const {Assignment, Course} = require("../models")
+const authenticateUser = require("../middleware/auth");
+
+router.use(authenticateUser);
 
 // GET /assignments - Gets ALL assignments
 router.get("/", async (req, res, next) => {
     try {
         const assignments = await Assignment.findAll({
-            include: Course
+            include: {
+                model: Course,
+                where: {
+                    userId: req.user.id
+                }
+            }
         });
 
         res.status(200).json(assignments);
@@ -28,6 +36,13 @@ router.get("/:id", async (req, res, next) => {
             return res.status(404).json({
                 error: "Assignment not found"
             });
+        }
+        
+        // Check for ownership
+        if (assignment.Course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            })
         }
 
         res.status(200).json(assignment);
@@ -52,13 +67,16 @@ router.post("/", async (req, res, next) => {
         // Validate course exists
         const course = await Course.findByPk(courseId);
 
-        if (!course) {
+        if (!course || course.userId !== req.user.id) {
             return res.status(400).json({
                 error: "Invalid courseId"
             });
         }
 
-        const assignment = await Assignment.create(req.body);
+        const assignment = await Assignment.create({
+            title,
+            courseId
+        });
 
         res.status(201).json(assignment);
 
@@ -70,7 +88,9 @@ router.post("/", async (req, res, next) => {
 // PUT /assignments/:id - Updates existing assignment
 router.put("/:id", async (req, res, next) => {
     try {
-        const assignment = await Assignment.findByPk(req.params.id);
+        const assignment = await Assignment.findByPk(req.params.id, {
+            include: Course
+        });
 
         if (!assignment) {
             return res.status(404).json({
@@ -78,11 +98,18 @@ router.put("/:id", async (req, res, next) => {
             });
         }
 
+        // Check for ownership
+        if (assignment.Course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            })
+        }
+
         // Validate updated course Id if present
         if (req.body.courseId) {
             const course = await Course.findByPk(req.body.courseId);
 
-            if (!course) {
+            if (!course ||  course.userId !== req.user.id) {
                 return res.status(400).json({
                     error: "Invalid courseId"
                 });
@@ -101,12 +128,21 @@ router.put("/:id", async (req, res, next) => {
 // DELETE /assignments/:id - Deletes assignment
 router.delete("/:id", async (req, res, next) => {
     try {
-        const assignment = await Assignment.findByPk(req.params.id);
+        const assignment = await Assignment.findByPk(req.params.id, {
+            include: Course
+        });
 
         if (!assignment) {
             return res.status(404).json({
                 error: "Assignment not found"
             });
+        }
+
+        // Check for ownership
+        if (assignment.Course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            })
         }
 
         await assignment.destroy();
