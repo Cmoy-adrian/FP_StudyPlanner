@@ -7,6 +7,7 @@ const { db } = require("./models");
 const courseRoutes = require("./routes/courseRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const studySessionRoutes = require("./routes/studySessionRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const logger = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
@@ -24,6 +25,8 @@ app.use("/courses", courseRoutes);
 app.use("/assignments", assignmentRoutes);
 
 app.use("/study-sessions", studySessionRoutes);
+
+app.use("/auth", authRoutes);
 
 // Health check route
 app.get("/health", (req, res) => {
