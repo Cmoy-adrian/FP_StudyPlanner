@@ -1,13 +1,24 @@
 const express = require("express");
 const router = express.Router();
 
-const {StudySession, Assignment} = require("../models")
+const {StudySession, Assignment} = require("../models");
+const authenticateUser = require("../middleware/auth");
+
+router.use(authenticateUser);
 
 // GET /study-sessions - Get ALL study sessions
 router.get("/", async (req, res, next) => {
     try {
         const sessions = await StudySession.findAll({
-            include: Assignment
+            include: {
+                model: Assignment,
+                include: {
+                    model: Course,
+                    where: {
+                        userId: req.user.id
+                    }
+                }
+            }
         });
 
         res.status(200).json(sessions);
@@ -21,12 +32,22 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
     try {
         const session = await StudySession.findByPk(req.params.id, {
-            include: Assignment
+            include: {
+                model: Assignment,
+                include: Course
+            }
         });
 
         if (!session) {
             return res.status(404).json({
                 error: "Study Session not found"
+            });
+        }
+
+        // Check for ownership
+        if (session.Assignment.Course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
             });
         }
 
@@ -50,15 +71,21 @@ router.post("/", async (req, res, next) => {
         }
 
         // Validate assignment exists
-        const assignment = await Assignment.findByPk(assignmentId);
+        const assignment = await Assignment.findByPk(assignmentId, {
+            include: Course
+        });
 
-        if (!assignment) {
+        if (!assignment || assignment.Course.userId !== req.user.id) {
             return res.status(400).json({
                 error: "Invalid assignmentId"
             });
         }
 
-        const session = await StudySession.create(req.body);
+        const session = await StudySession.create({
+            assignmentId,
+            startTime,
+            endTime
+        });
 
         res.status(201).json(session);
     } catch (error) {
@@ -69,7 +96,12 @@ router.post("/", async (req, res, next) => {
 // PUT /study-sessions/:id - Update study session
 router.put("/:id", async (req, res, next) => {
     try {
-        const session = await StudySession.findByPk(req.params.id);
+        const session = await StudySession.findByPk(req.params.id, {
+            include: {
+                model: Assignment,
+                include: Course
+            }
+        });
 
         if (!session) {
             return res.status(404).json({
@@ -77,11 +109,20 @@ router.put("/:id", async (req, res, next) => {
             });
         }
 
+        // Check for ownership
+        if (session.Assignment.Course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            });
+        }
+
         // Validate updated assignmentId
         if (req.body.assignmentId) {
-            const assignment= await Assignment.findByPk(req.body.assignmentId);
+            const assignment= await Assignment.findByPk(req.body.assignmentId, {
+                include: Course
+            });
 
-            if (!assignment) {
+            if (!assignment || assignment.Course.userId !== req.user.id) {
                 return res.status(400).json({
                     error: "Invalid assignmentId"
                 });
@@ -99,13 +140,26 @@ router.put("/:id", async (req, res, next) => {
 // DELETE /study-sessions/:id - Delete study session
 router.delete("/:id", async (req, res, next) => {
     try {
-        const session = await StudySession.findByPk(req.params.id);
+        const session = await StudySession.findByPk(req.params.id, {
+            include: {
+                model: Assignment,
+                include: Course
+            }
+        });
 
         if (!session) {
             return res.status(404).json({
                 error: "Study session not found"
             });
         }
+
+        // Check for ownership
+        if (session.Assignment.Course.userId !== req.user.id) {
+            return res.status(403).json({
+                error: "Access denied"
+            });
+        }
+        
         await session.destroy();
 
         res.status(200).json({
