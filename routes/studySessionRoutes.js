@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const {StudySession, Assignment} = require("../models");
+const {StudySession, Assignment, Course} = require("../models");
 const authenticateUser = require("../middleware/auth");
 
 router.use(authenticateUser);
@@ -75,7 +75,14 @@ router.post("/", async (req, res, next) => {
             include: Course
         });
 
-        if (!assignment || !assignment.Course || assignment.Course.userId !== req.user.id) {
+        if (!assignment) {
+            return res.status(403).json({
+                error: "Invalid assignment"
+            });
+        }
+        
+        // Check for ownership
+        if (!assignment.Course || assignment.Course.userId !== req.user.id) {
             return res.status(403).json({
                 error: "Access denied"
             });
