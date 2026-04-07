@@ -49,7 +49,7 @@ router.post("/login", async (req, res) =>  {
         const {email, password} = req.body;
 
         // Need password included (defaultScope excludes it)
-        const user = await User.scope(null).findOne({
+        const user = await User.scope("withPassword").findOne({
             where: {email}
         });
 

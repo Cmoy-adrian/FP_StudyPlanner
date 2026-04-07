@@ -39,6 +39,13 @@ const User = db.define("User", {
     // Security Improvement: Removes password when using .findAll()
     defaultScope:{
         attributes: {exclude: ["password"]}
+    },
+
+    // Allows password to be obtained during login
+    scopes: {
+        withPassword: {
+            attributes: {}
+        }
     }
 });
 
