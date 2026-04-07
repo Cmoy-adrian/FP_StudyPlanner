@@ -64,11 +64,11 @@ router.post("/", async (req, res, next) => {
             });
         }
 
-        // Validate course exists
+        // Validate course exists + ownership
         const course = await Course.findByPk(courseId);
 
         if (!course || course.userId !== req.user.id) {
-            return res.status(400).json({
+            return res.status(403).json({
                 error: "Invalid courseId"
             });
         }
@@ -110,7 +110,7 @@ router.put("/:id", async (req, res, next) => {
             const course = await Course.findByPk(req.body.courseId);
 
             if (!course ||  course.userId !== req.user.id) {
-                return res.status(400).json({
+                return res.status(403).json({
                     error: "Invalid courseId"
                 });
             }
