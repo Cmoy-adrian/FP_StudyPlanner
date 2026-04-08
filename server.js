@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 
-const { db } = require("./models");
+const { sequelize } = require("./models");
 
 const courseRoutes = require("./routes/courseRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes");
@@ -49,7 +49,7 @@ const PORT = process.env.PORT || 3000;
 // Func: Run to boot up server
 async function startServer() {
   try {
-    await db.authenticate();
+    await sequelize.authenticate();
 
     console.log("Database connected");
 
