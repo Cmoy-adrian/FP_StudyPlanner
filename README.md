@@ -218,6 +218,8 @@ Benefits:
 ---
 
 # Project Structure
+
+```
 FP_StudyPlanner
 │
 ├── database/
@@ -243,6 +245,7 @@ FP_StudyPlanner
 │
 ├── services/
 │ └── recService.js
+│
 ├── tests/
 │ ├── admin.test.js
 │ ├── assignment.test.js
@@ -253,6 +256,7 @@ FP_StudyPlanner
 │
 ├── server.js
 └── README.md
+```
 
 ---
 
