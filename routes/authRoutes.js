@@ -5,11 +5,18 @@ const jwt = require("jsonwebtoken");
 
 const {User} = require("../models");
 const authenticateUser = require("../middleware/auth");
+const { ValidationError, UniqueConstraintError } = require("sequelize");
 
 // POST /auth/register - Register new user
 router.post("/register", async (req, res) => {
     try {
         const {username, email, password} = req.body
+
+        if (!username || !email || !password) {
+            return res.status(400).json({
+                message: "Username, email, and password are required"
+            });
+        }
 
         // Check existing user
         const existingUser = await User.findOne({
@@ -39,6 +46,18 @@ router.post("/register", async (req, res) => {
         });
 
     } catch (error) {
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                message: error.errors.map(err => err.message) // Returns what validation failed
+            })
+        }
+
+        if (error instanceof UniqueConstraintError) {
+            return res.status(400).json({
+                message: "Email already exists"
+            });
+        }
+
         console.error(error);
 
         res.status(500).json({
@@ -50,11 +69,18 @@ router.post("/register", async (req, res) => {
 // POST /auth/login - Login existing user
 router.post("/login", async (req, res) =>  {
     try {
-        const {email, password} = req.body;
+        const { email, password } = req.body;
+
+        // Required field validation
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            });
+        }
 
         // Need password included (defaultScope excludes it)
         const user = await User.scope("withPassword").findOne({
-            where: {email}
+            where: { email }
         });
 
         if (!user) {
@@ -82,12 +108,23 @@ router.post("/login", async (req, res) =>  {
             }
         );
 
+        const safeUser = user.toJSON();
+        delete safeUser.password;
+
         res.json({
             message: "Login successful",
-            token
+            token,
+            user: safeUser
         });
 
     } catch (error) {
+
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                message: error.errors.map(err => err.message)
+            });
+        }
+
         console.error(error);
 
         res.status(500).json({
@@ -101,9 +138,21 @@ router.get("/me", authenticateUser, async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id);
 
-        res.json(user);
-        
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        res.json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        });
+
     } catch (error) {
+
         console.error(error);
 
         res.status(500).json({
