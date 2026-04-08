@@ -69,7 +69,7 @@ router.delete("/user/:id", authenticateUser, role("admin"), async(req, res) => {
 
         // Prevent admins from deleting themselves
         if (req.user.id === user.id) {
-            return res.statusMessage(400).json({
+            return res.status(400).json({
                 message: "Admins cannot delete themselves"
             });
         }
