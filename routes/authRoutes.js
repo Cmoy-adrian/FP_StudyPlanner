@@ -29,6 +29,10 @@ router.post("/register", async (req, res) => {
             password
         });
 
+        // Converts instance to JSON & removes password
+        const userResponse = newUser.toJSON();
+        delete userResponse.password;
+
         res.status(201).json({
             message: "User created successfully",
             user: newUser
