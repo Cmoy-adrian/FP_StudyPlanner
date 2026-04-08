@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const {
-  db,
+  sequelize,
   User,
   Course,
   Assignment,
@@ -12,7 +12,7 @@ async function seedDatabase() {
 
   try {
 
-    await db.sync({ force: true });
+    await sequelize.sync({ force: true });
 
     console.log("Database reset complete");
 
