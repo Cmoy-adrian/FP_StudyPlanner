@@ -223,6 +223,9 @@ Benefits:
 FP_StudyPlanner
 │
 ├── database/
+│ ├── db.js
+│ ├── seed.js
+│ └── setup.js
 │
 ├── middleware/
 │ ├── auth.js
