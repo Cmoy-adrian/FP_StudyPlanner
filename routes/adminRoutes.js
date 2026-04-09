@@ -57,7 +57,7 @@ router.patch("/users/:id/role", authenticateUser, role("admin"), async (req, res
 });
 
 // DELETE /admin/users/:id - Delete user
-router.delete("/user/:id", authenticateUser, role("admin"), async(req, res) => {
+router.delete("/users/:id", authenticateUser, role("admin"), async(req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
 
